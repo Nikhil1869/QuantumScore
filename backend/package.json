@@ -1,5 +1,5 @@
 {
-  "name": "ai-sports-predictor-backend",
+  "name": "quantumscore-backend",
   "version": "2.0.0",
   "description": "Express.js proxy server for the AI Sports Predictor ML service",
   "license": "MIT",

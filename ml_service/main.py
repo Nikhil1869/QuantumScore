@@ -22,7 +22,7 @@ from real_data_fetcher import (
 )
 
 app = FastAPI(
-    title="AI Sports Predictor API",
+    title="QuantumScore API",
     description="ML-powered sports match outcome prediction",
     version="2.0.0",
 )

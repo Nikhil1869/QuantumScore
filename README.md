@@ -1,4 +1,4 @@
-# 🏆 AI Sports Predictor
+# 🏆 QuantumScore
 
 > ML-powered sports match outcome prediction across Football, Cricket & Basketball.
 
@@ -77,8 +77,8 @@ Prediction/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/ai-sports-predictor.git
-cd ai-sports-predictor
+git clone https://github.com/<your-username>/QuantumScore.git
+cd QuantumScore
 ```
 
 ### 2. Set up environment variables
