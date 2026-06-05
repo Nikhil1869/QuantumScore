@@ -35,7 +35,7 @@
 ## Project Structure
 
 ```
-Prediction/
+QuantumScore/
 ├── backend/                  # Express.js API proxy
 │   ├── server.js
 │   └── package.json
@@ -53,18 +53,19 @@ Prediction/
 │   ├── features.py           # Feature extraction (10 features)
 │   ├── explain.py            # Feature importance explainer
 │   ├── train.py              # Model training pipeline
-│   ├── auto_train.py         # Automated retraining
-│   ├── model.pkl             # Trained model
-│   └── model_meta.json       # Model performance metrics
+│   └── auto_train.py         # Automated retraining
 ├── scraper/                  # Data fetching & generation
 │   ├── real_data_fetcher.py  # Live/past/future match data
 │   └── generate_training_data.py
-├── training_data.csv         # Generated training dataset
 ├── requirements.txt          # Python dependencies
 ├── .env.example              # Environment variable template
+├── .gitignore                # Git ignore rules
+├── CONTRIBUTING.md           # Contribution guidelines
 ├── LICENSE                   # MIT License
 └── README.md                 # This file
 ```
+
+> **Note:** Model files (`model.pkl`, `model_meta.json`) and `training_data.csv` are generated locally and not tracked in git. See the setup steps below to generate them.
 
 ## Prerequisites
 
@@ -96,13 +97,21 @@ source venv/bin/activate   # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 4. Start the ML Service (port 8001)
+### 4. Generate the ML model (first time only)
+
+```bash
+python -m ml_service.train
+```
+
+This creates `model.pkl` and `model_meta.json` inside `ml_service/`.
+
+### 5. Start the ML Service (port 8001)
 
 ```bash
 uvicorn ml_service.main:app --port 8001 --reload
 ```
 
-### 5. Start the Backend (port 5000)
+### 6. Start the Backend (port 5000)
 
 ```bash
 cd backend
@@ -110,7 +119,7 @@ npm install
 npm start
 ```
 
-### 6. Start the Frontend (port 3000)
+### 7. Start the Frontend (port 3000)
 
 ```bash
 cd frontend
