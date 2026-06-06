@@ -6,6 +6,8 @@ export interface PredictionFeature {
 }
 
 export interface PredictionResultData {
+  homeTeamName: string;
+  awayTeamName: string;
   homeWin: number;
   draw: number;
   awayWin: number;
@@ -16,128 +18,79 @@ export interface PredictionResultData {
   insights: string[];
 }
 
-// Deterministic mock predictor
 export const predictOutcome = async (
   sport: Sport,
   homeTeam: string,
   awayTeam: string,
   formData: any
 ): Promise<PredictionResultData> => {
-  // Simulate network delay
-  const inferenceMs = 600 + Math.random() * 400;
-  await new Promise(resolve => setTimeout(resolve, inferenceMs));
-
-  // Create a deterministic hash from the team names to generate stable "randomness"
-  const hash = (homeTeam + awayTeam).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const startTime = Date.now();
   
-  // Base probabilities based on hash
-  let homeWin = (hash % 60) + 20; // 20-80%
-  let draw = sport === 'basketball' ? 0 : (hash % 20) + 10; // 10-30%
-  let awayWin = 100 - homeWin - draw;
+  try {
+    const response = await fetch('http://localhost:5000/api/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sport, homeTeam, awayTeam, ...formData })
+    });
+    
+    if (!response.ok) throw new Error("Failed to fetch prediction");
+    const data = await response.json();
+    
+    const inferenceMs = Date.now() - startTime;
+    
+    // Map feature dictionary to array
+    const featureImportance = Object.entries(data.feature_importance || {}).map(
+      ([name, value]) => ({ name, value: Number(value) })
+    ).sort((a, b) => b.value - a.value);
 
-  // Track dynamic insights
-  let insights: string[] = [];
-
-  // 1. APPLY REST DAYS ADVANTAGE
-  const homeRest = formData.homeRestDays ? parseInt(formData.homeRestDays, 10) : 7;
-  const awayRest = formData.awayRestDays ? parseInt(formData.awayRestDays, 10) : 7;
-  const restAdvantage = homeRest - awayRest;
-  
-  if (Math.abs(restAdvantage) > 2) {
-    // Huge impact for 3+ days difference
-    const restModifier = restAdvantage * 1.5;
-    homeWin += restModifier;
-    awayWin -= restModifier;
-    const restedTeam = restAdvantage > 0 ? homeTeam : awayTeam;
-    const tiredTeam = restAdvantage > 0 ? awayTeam : homeTeam;
-    insights.push(`Significant ${Math.abs(restAdvantage)}-day rest advantage for ${restedTeam} severely penalizes ${tiredTeam}'s expected performance.`);
-  }
-
-  // 2. APPLY MATCH CONTEXT (Derby, Top 6, Relegation)
-  if (formData.matchContext === 'Derby') {
-    // Derbies are tight, draw probability spikes
-    draw += 15;
-    homeWin -= 7.5;
-    awayWin -= 7.5;
-    insights.push("Local Derby dynamics heavily increase the probability of a tight, low-scoring draw.");
-  } else if (formData.matchContext === 'Top 6 Clash') {
-    // Top 6 clash slightly favors the home team tactically
-    homeWin += 5;
-    insights.push("In Top 6 clashes, tactical rigidity slightly favors the home side.");
-  } else if (formData.matchContext === 'Relegation Battle') {
-    // Relegation battles are highly volatile
-    insights.push("Relegation battle context adds high volatility to the expected outcome.");
-  }
-
-  // Normalize
-  const total = homeWin + draw + awayWin;
-  homeWin = (homeWin / total) * 100;
-  draw = (draw / total) * 100;
-  awayWin = (awayWin / total) * 100;
-
-  // Confidence is how dominant the winning prediction is
-  const maxProb = Math.max(homeWin, draw, awayWin);
-  let confidence = maxProb > 60 ? (maxProb / 100) * 1.1 : (maxProb / 100) * 1.3;
-  if (formData.matchContext === 'Relegation Battle') confidence *= 0.85; // Penalty for volatility
-  confidence = Math.min(0.99, Math.max(0.4, confidence));
-
-  // Generate features based on sport
-  let featureImportance: PredictionFeature[] = [];
-
-  if (sport === 'football') {
-    // Upgraded Football Features based on external repo
-    featureImportance = [
-      { name: 'Bayesian Elo Rating', value: 0.35 },
-      { name: 'Expected Goals (xG)', value: 0.25 },
-      { name: 'Rest Days Advantage', value: 0.20 },
-      { name: 'Recent Goal Patterns', value: 0.10 },
-      { name: 'Travel Distance', value: 0.10 },
-    ];
-    if (insights.length === 0) {
-      insights.push(`${homeTeam}'s superior Bayesian Elo Rating is heavily influencing the model.`);
-      insights.push(`Shot conversion metrics and Expected Goals (xG) strongly correlate with this outcome.`);
+    // Calibrated confidence logic
+    // The backend returns a real calibrated confidence, usually above 50 (e.g. 55-90)
+    // Map backend confidence (0-100 or 0-1 range). 
+    // Wait, the backend returns confidence as `round(confidence * 100, 1)`
+    const confidencePercent = data.confidence; 
+    let confidenceRatio = confidencePercent / 100;
+    
+    // Map binary win to home/away/draw percentages
+    let homeWin = 0;
+    let awayWin = 0;
+    let draw = sport === 'basketball' ? 0 : 5;
+    
+    if (data.winner === homeTeam) {
+      homeWin = confidencePercent - (draw / 2);
+      awayWin = 100 - homeWin - draw;
+    } else {
+      awayWin = confidencePercent - (draw / 2);
+      homeWin = 100 - awayWin - draw;
     }
-  } else if (sport === 'cricket') {
-    featureImportance = [
-      { name: 'Batting Avg', value: 0.30 },
-      { name: 'Pitch Type', value: 0.25 },
-      { name: 'Bowling Economy', value: 0.20 },
-      { name: 'Toss Winner', value: 0.15 },
-      { name: 'Weather', value: 0.10 },
-    ];
-    if (insights.length === 0) {
-      insights.push(`The pitch conditions favor the spin attack of ${maxProb === homeWin ? homeTeam : awayTeam}.`);
-      insights.push(`Batting averages in recent matches strongly correlate with this prediction.`);
-    }
-  } else {
-    // Basketball
-    featureImportance = [
-      { name: 'Points Per Game', value: 0.30 },
-      { name: 'Rest Advantage', value: 0.25 },
-      { name: '3PT Percentage', value: 0.20 },
-      { name: 'Rebounds', value: 0.15 },
-      { name: 'Pace', value: 0.10 },
-    ];
-    if (insights.length === 0) {
-      insights.push(`Perimeter shooting efficiency (3PT%) is the defining metric for this matchup.`);
-      insights.push(`Rebounding dominance will likely control the game tempo.`);
-    }
+
+    return {
+      homeTeamName: homeTeam,
+      awayTeamName: awayTeam,
+      homeWin: Math.max(0, homeWin),
+      draw: draw,
+      awayWin: Math.max(0, awayWin),
+      confidence: confidenceRatio,
+      featureImportance,
+      modelVersion: "XGB-Calibrated-V3",
+      inferenceMs,
+      insights: data.reasons || []
+    };
+    
+  } catch (err) {
+    console.error("Predict error, falling back to mock:", err);
+    // Fallback Mock Logic
+    const inferenceMs = Date.now() - startTime;
+    const hash = (homeTeam + awayTeam).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const mockConf = 0.75 + (hash % 20) / 100;
+    return {
+      homeTeamName: homeTeam,
+      awayTeamName: awayTeam,
+      homeWin: 65, draw: 5, awayWin: 30,
+      confidence: mockConf,
+      featureImportance: [{ name: "Fallback Feature", value: 0.8 }],
+      modelVersion: "Mock-Fallback",
+      inferenceMs,
+      insights: ["Connected to mock backend due to API failure."]
+    };
   }
-
-  // Jiggle feature values slightly deterministically
-  featureImportance = featureImportance.map(f => ({
-    name: f.name,
-    value: Math.min(1, Math.max(0, f.value + ((hash % 10) - 5) / 100))
-  })).sort((a, b) => b.value - a.value);
-
-  return {
-    homeWin,
-    draw,
-    awayWin,
-    confidence,
-    featureImportance,
-    modelVersion: "XGB-V2.1-Advanced",
-    inferenceMs: Math.round(inferenceMs),
-    insights
-  };
 };

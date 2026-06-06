@@ -12,7 +12,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.egg-info/
-dist/
 build/
 *.egg
 
@@ -65,11 +64,17 @@ pnpm-debug.log*
 *.pkl
 *.joblib
 ml_service/model_meta.json
+ml_service/models/
+ml_service/data/
 
 # ──────────────────────────────────────────────
-# Generated data
+# Generated / downloaded data
 # ──────────────────────────────────────────────
 training_data.csv
+ipl_json/
+t20s_json/
+README.txt
+backend/data/history.json
 
 # ──────────────────────────────────────────────
 # IDE / Agent data
@@ -80,3 +85,4 @@ training_data.csv
 # Unrelated sub-projects (separate repos)
 # ──────────────────────────────────────────────
 finplanner/
+frontend/all_leagues-_prediction/

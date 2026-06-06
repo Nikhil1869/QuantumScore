@@ -1,73 +1,64 @@
-# React + TypeScript + Vite
+# QuantumScore Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScript web application for the QuantumScore sports prediction platform.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React 19** — UI framework
+- **TypeScript** — Type safety
+- **Vite 8** — Build tool & dev server
+- **Tailwind CSS 3** — Utility-first styling
+- **Framer Motion** — Animations & transitions
+- **Recharts** — Data visualization (analytics dashboard)
+- **React Select** — Team selection dropdowns
+- **Lucide React** — Icons
 
-## React Compiler
+## Structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── app/
+│   ├── components/           # Reusable UI components
+│   │   ├── PredictionForm    # Match prediction input form
+│   │   ├── PredictionResult  # Prediction output display
+│   │   ├── AnalyticsDashboard # Charts & model performance
+│   │   ├── PredictionHistoryTable # Past predictions
+│   │   ├── RecentPredictions # Quick-view recent results
+│   │   ├── SportSelector     # Football/Cricket/Basketball toggle
+│   │   ├── TeamSelect        # Searchable team dropdown
+│   │   ├── Card              # Generic card wrapper
+│   │   └── ui/               # Base UI primitives
+│   ├── lib/                  # Utilities & data
+│   │   ├── predictor.ts      # API client for predictions
+│   │   ├── sports-data.ts    # Team rosters & league data
+│   │   ├── analytics-data.ts # Mock analytics data
+│   │   └── utils.ts          # Helper functions (cn, etc.)
+│   ├── pages/
+│   │   └── Login.tsx         # Login page
+│   └── App.tsx               # Root app with layout & routing
+├── main.tsx                  # Entry point
+└── index.css                 # Global styles & Tailwind directives
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+# Install dependencies
+npm install
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Start dev server (port 5173)
+npm run dev
+
+# Lint
+npm run lint
+
+# Production build
+npm run build
+
+# Preview production build
+npm run preview
 ```
+
+## API Proxy
+
+The Vite dev server proxies `/api/*` requests to the backend Express server on port 5000. See `vite.config.ts` for the proxy configuration.

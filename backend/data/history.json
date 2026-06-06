@@ -1,5 +1,85 @@
 [
   {
+    "id": "f5c20284-4012-49ec-8fec-082b082d2d48",
+    "match": "Afghanistan vs Argentina",
+    "sport": "cricket",
+    "predicted": "Argentina",
+    "actual": "Pending",
+    "confidence": 70.1,
+    "isCorrect": null,
+    "date": "06/06/2026"
+  },
+  {
+    "id": "0be52ef9-d990-4a5e-b54c-e1a03cdfc228",
+    "match": "Afghanistan vs Argentina",
+    "sport": "cricket",
+    "predicted": "Argentina",
+    "actual": "Pending",
+    "confidence": 70.1,
+    "isCorrect": null,
+    "date": "06/06/2026"
+  },
+  {
+    "id": "f0d9e036-8d5b-499e-97a1-384550b1643b",
+    "match": "India vs Australia",
+    "sport": "cricket",
+    "predicted": "India",
+    "actual": "Pending",
+    "confidence": 71,
+    "isCorrect": null,
+    "date": "06/06/2026"
+  },
+  {
+    "id": "4096ed88-695d-43d8-9153-7c47ae397d16",
+    "match": "India vs Australia",
+    "sport": "cricket",
+    "predicted": "Australia",
+    "actual": "Pending",
+    "confidence": 67.9,
+    "isCorrect": null,
+    "date": "06/06/2026"
+  },
+  {
+    "id": "8255a776-2f08-4052-ba11-fb68b79bcd92",
+    "match": "Afghanistan vs Argentina",
+    "sport": "cricket",
+    "predicted": "Afghanistan",
+    "actual": "Pending",
+    "confidence": 72,
+    "isCorrect": null,
+    "date": "06/06/2026"
+  },
+  {
+    "id": "131cac4b-3e18-40b7-ba57-9cb88d5cca34",
+    "match": "Afghanistan vs Argentina",
+    "sport": "cricket",
+    "predicted": "Afghanistan",
+    "actual": "Pending",
+    "confidence": 72,
+    "isCorrect": null,
+    "date": "06/06/2026"
+  },
+  {
+    "id": "cff3768f-8985-4788-af24-95a212135fb1",
+    "match": "India vs Australia",
+    "sport": "cricket",
+    "predicted": "Australia",
+    "actual": "Pending",
+    "confidence": 67.9,
+    "isCorrect": null,
+    "date": "06/06/2026"
+  },
+  {
+    "id": "9382fe82-9230-41c9-937e-390a15da15b8",
+    "match": "Pakistan vs Australia",
+    "sport": "cricket",
+    "predicted": "Australia",
+    "actual": "Pending",
+    "confidence": 53.4,
+    "isCorrect": null,
+    "date": "06/06/2026"
+  },
+  {
     "id": "8ffb0595-d207-4e01-9b8e-f437b2b97d1c",
     "match": "Manchester United vs Liverpool",
     "sport": "football",

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Sport } from '../lib/sports-data';
 import { TEAMS } from '../lib/sports-data';
 import { Card } from './Card';
+import { TeamSelect } from './TeamSelect';
 import { predictOutcome } from '../lib/predictor';
 
 interface PredictionFormProps {
@@ -22,6 +23,13 @@ export function PredictionForm({ sport, onPredict }: PredictionFormProps) {
   const [homeRestDays, setHomeRestDays] = useState(7);
   const [awayRestDays, setAwayRestDays] = useState(7);
   const [matchContext, setMatchContext] = useState('Regular');
+  
+  // Live Match Metrics
+  const [currentScore, setCurrentScore] = useState<string>('');
+  const [oversCompleted, setOversCompleted] = useState<string>('');
+  const [wicketsLost, setWicketsLost] = useState<string>('');
+  const [targetScore, setTargetScore] = useState<string>('');
+  const [actualScore, setActualScore] = useState<string>('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +39,12 @@ export function PredictionForm({ sport, onPredict }: PredictionFormProps) {
       pitch,
       homeRestDays,
       awayRestDays,
-      matchContext
+      matchContext,
+      current_score: parseInt(currentScore) || 0,
+      overs_completed: parseFloat(oversCompleted) || 0,
+      wickets_lost: parseInt(wicketsLost) || 0,
+      target_score: parseInt(targetScore) || 0,
+      actual_score: parseInt(actualScore) || 0
     });
     setIsPredicting(false);
     onPredict(result);
@@ -46,27 +59,19 @@ export function PredictionForm({ sport, onPredict }: PredictionFormProps) {
       
       <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-bold text-olive/80 uppercase tracking-wide">Home Team</label>
-            <select 
-              className="w-full border border-sage/40 bg-surface rounded-xl p-3 text-sm font-semibold text-textMain outline-none focus:border-sage-dark focus:ring-1 focus:ring-sage-dark"
-              value={homeTeam}
-              onChange={(e) => setHomeTeam(e.target.value)}
-            >
-              {TEAMS[sport].map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
-          </div>
+          <TeamSelect
+            sport={sport}
+            label="Home Team"
+            value={homeTeam}
+            onChange={setHomeTeam}
+          />
 
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-bold text-olive/80 uppercase tracking-wide">Away Team</label>
-            <select 
-              className="w-full border border-sage/40 bg-surface rounded-xl p-3 text-sm font-semibold text-textMain outline-none focus:border-sage-dark focus:ring-1 focus:ring-sage-dark"
-              value={awayTeam}
-              onChange={(e) => setAwayTeam(e.target.value)}
-            >
-              {TEAMS[sport].map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
-          </div>
+          <TeamSelect
+            sport={sport}
+            label="Away Team"
+            value={awayTeam}
+            onChange={setAwayTeam}
+          />
         </div>
 
         {/* Advanced Modifiers based on external feature analysis */}
@@ -136,6 +141,62 @@ export function PredictionForm({ sport, onPredict }: PredictionFormProps) {
             </div>
           )}
         </div>
+
+        {/* Live Metrics for Cricket (In-play scenarios) */}
+        {sport === 'cricket' && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-gray-50">
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-olive/80 uppercase tracking-wide">Current Score</label>
+              <input 
+                type="number" min="0" max="400"
+                value={currentScore}
+                onChange={(e) => setCurrentScore(e.target.value)}
+                className="w-full border border-sage/40 bg-surface rounded-xl p-3 text-sm font-semibold text-textMain outline-none focus:border-sage-dark focus:ring-1 focus:ring-sage-dark"
+                placeholder="0"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-olive/80 uppercase tracking-wide">Overs Done</label>
+              <input 
+                type="number" step="0.1" min="0" max="50"
+                value={oversCompleted}
+                onChange={(e) => setOversCompleted(e.target.value)}
+                className="w-full border border-sage/40 bg-surface rounded-xl p-3 text-sm font-semibold text-textMain outline-none focus:border-sage-dark focus:ring-1 focus:ring-sage-dark"
+                placeholder="0.0"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-olive/80 uppercase tracking-wide">Wickets Lost</label>
+              <input 
+                type="number" min="0" max="10"
+                value={wicketsLost}
+                onChange={(e) => setWicketsLost(e.target.value)}
+                className="w-full border border-sage/40 bg-surface rounded-xl p-3 text-sm font-semibold text-textMain outline-none focus:border-sage-dark focus:ring-1 focus:ring-sage-dark"
+                placeholder="0"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-olive/80 uppercase tracking-wide">Target Score (If 2nd Inn)</label>
+              <input 
+                type="number" min="0" max="400"
+                value={targetScore}
+                onChange={(e) => setTargetScore(e.target.value)}
+                className="w-full border border-sage/40 bg-surface rounded-xl p-3 text-sm font-semibold text-textMain outline-none focus:border-sage-dark focus:ring-1 focus:ring-sage-dark"
+                placeholder="0 for 1st Innings"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-olive/80 uppercase tracking-wide">Actual Final Score</label>
+              <input 
+                type="number" min="0" max="400"
+                value={actualScore}
+                onChange={(e) => setActualScore(e.target.value)}
+                className="w-full border border-sage/40 bg-surface rounded-xl p-3 text-sm font-semibold text-textMain outline-none focus:border-sage-dark focus:ring-1 focus:ring-sage-dark bg-sage/5"
+                placeholder="For testing error"
+              />
+            </div>
+          </div>
+        )}
 
         <button 
           type="submit" 

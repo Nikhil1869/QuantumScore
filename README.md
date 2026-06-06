@@ -38,7 +38,8 @@
 ```
 QuantumScore/
 ├── backend/                  # Express.js API proxy
-│   ├── server.js
+│   ├── server.js             # Proxy server with API routing
+│   ├── data/                 # Runtime data (gitignored)
 │   └── package.json
 ├── frontend/                 # React + TypeScript UI (Vite)
 │   ├── src/
@@ -53,23 +54,32 @@ QuantumScore/
 │   ├── tailwind.config.js    # Tailwind CSS configuration
 │   └── package.json
 ├── ml_service/               # FastAPI + XGBoost prediction service
-│   ├── main.py               # API endpoints
+│   ├── main.py               # API endpoints (prediction, live/past/future matches)
+│   ├── app.py                # Alternative app entry point
 │   ├── features.py           # Feature extraction (10 features)
 │   ├── explain.py            # Feature importance explainer
-│   ├── train.py              # Model training pipeline
-│   └── auto_train.py         # Automated retraining
+│   ├── train.py              # Model training pipeline (synthetic data)
+│   ├── train_models.py       # Cricsheet-based model training
+│   ├── parse_cricsheet.py    # Parse Cricsheet JSON → training features
+│   ├── auto_train.py         # Automated retraining
+│   ├── models/               # Trained model files (gitignored)
+│   └── data/                 # Processed training data (gitignored)
 ├── scraper/                  # Data fetching & generation
-│   ├── real_data_fetcher.py  # Live/past/future match data
-│   └── generate_training_data.py
+│   ├── real_data_fetcher.py  # Live/past/future match data from APIs
+│   └── generate_training_data.py  # Synthetic training data generator
+├── ipl_json/                 # IPL match data from Cricsheet (gitignored)
+├── t20s_json/                # T20 match data from Cricsheet (gitignored)
 ├── requirements.txt          # Python dependencies
 ├── .env.example              # Environment variable template
 ├── .gitignore                # Git ignore rules
 ├── CONTRIBUTING.md           # Contribution guidelines
+├── SECURITY.md               # Security policy
+├── CHANGELOG.md              # Version history
 ├── LICENSE                   # MIT License
 └── README.md                 # This file
 ```
 
-> **Note:** Model files (`model.pkl`, `model_meta.json`) and `training_data.csv` are generated locally and not tracked in git. See the setup steps below to generate them.
+> **Note:** Model files (`.pkl`, `.joblib`, `model_meta.json`), raw Cricsheet data (`ipl_json/`, `t20s_json/`), and `training_data.csv` are generated locally and not tracked in git. See the [Data](#data) and [Setup](#quick-start) sections below.
 
 ## Prerequisites
 
@@ -82,7 +92,7 @@ QuantumScore/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/QuantumScore.git
+git clone https://github.com/Nikhil1869/QuantumScore.git
 cd QuantumScore
 ```
 
@@ -133,6 +143,35 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173) in your browser.
 
+## Data
+
+### Cricsheet Match Data
+
+The ML models can be trained using real match data from [Cricsheet](https://cricsheet.org/). These JSON files are **not included** in the repository due to their size.
+
+To download:
+
+```bash
+# IPL match data
+curl -o ipl_json.zip https://cricsheet.org/downloads/ipl_json.zip
+unzip ipl_json.zip -d ipl_json/
+
+# T20 International match data
+curl -o t20s_json.zip https://cricsheet.org/downloads/t20s_json.zip
+unzip t20s_json.zip -d t20s_json/
+```
+
+Once downloaded, train models using the Cricsheet pipeline:
+
+```bash
+python -m ml_service.parse_cricsheet    # Parse JSON → features
+python -m ml_service.train_models       # Train models on parsed data
+```
+
+### Synthetic Data
+
+Alternatively, the default `ml_service.train` generates 2,000 synthetic training samples that work without any external data download.
+
 ## API Endpoints
 
 All endpoints are available through the backend proxy (`localhost:5000`) or directly from the ML service (`localhost:8001`).
@@ -176,6 +215,9 @@ POST /api/predict
 # Regenerate training data (2,000 samples) and retrain
 python -m ml_service.train
 
+# Or train on real Cricsheet data
+python -m ml_service.train_models
+
 # Or use the auto-retrain script
 python -m ml_service.auto_train
 
@@ -190,7 +232,7 @@ curl -X POST http://localhost:8001/retrain
 | Algorithm | XGBoost (native API) |
 | Objective | Binary logistic regression |
 | Features | 10 (form, strength, home advantage, H2H, goals, defense) |
-| Training samples | 2,000 (synthetic) |
+| Training data | 2,000 synthetic samples or Cricsheet real match data |
 | Sports covered | Football, Cricket, Basketball |
 
 ## Contributing
@@ -201,6 +243,15 @@ curl -X POST http://localhost:8001/retrain
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
 ## License
 
 This project is licensed under the MIT License — see [LICENSE](LICENSE) for details.
+
+## Acknowledgments
+
+- [Cricsheet](https://cricsheet.org/) — Ball-by-ball cricket match data in JSON format
+- [XGBoost](https://xgboost.readthedocs.io/) — Gradient boosting framework
+- [FastAPI](https://fastapi.tiangolo.com/) — Modern Python web framework
+- [Vite](https://vite.dev/) — Next-generation frontend build tool
