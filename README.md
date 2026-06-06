@@ -1,4 +1,4 @@
-# 🏆 QuantumScore
+#  QuantumScore
 
 > ML-powered sports match outcome prediction across Football, Cricket & Basketball.
 
