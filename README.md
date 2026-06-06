@@ -6,7 +6,8 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![XGBoost](https://img.shields.io/badge/XGBoost-2.0+-EC4E20)](https://xgboost.readthedocs.io)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js&logoColor=white)](https://nodejs.org)
-[![Next.js](https://img.shields.io/badge/Next.js-14+-000000?logo=next.js&logoColor=white)](https://nextjs.org)
+[![React](https://img.shields.io/badge/React-19+-61DAFB?logo=react&logoColor=black)](https://react.dev)
+[![Vite](https://img.shields.io/badge/Vite-8+-646CFF?logo=vite&logoColor=white)](https://vite.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
@@ -16,10 +17,10 @@
 ```
 ┌──────────────┐     ┌──────────────┐     ┌──────────────────┐
 │   Frontend   │────▶│   Backend    │────▶│   ML Service     │
-│  (Next.js)   │     │  (Express)   │     │  (FastAPI +      │
-│  Port 3000   │     │  Port 5000   │     │   XGBoost)       │
-└──────────────┘     └──────────────┘     │  Port 8001       │
-                                          └──────┬───────────┘
+│  (Vite +     │     │  (Express)   │     │  (FastAPI +      │
+│   React/TS)  │     │  Port 5000   │     │   XGBoost)       │
+│  Port 5173   │     └──────────────┘     │  Port 8001       │
+└──────────────┘                          └──────┬───────────┘
                                                  │
                                           ┌──────▼───────────┐
                                           │  Scraper / Data  │
@@ -27,7 +28,7 @@
                                           └──────────────────┘
 ```
 
-- **Frontend** — Next.js UI for match browsing and predictions
+- **Frontend** — React + TypeScript UI (Vite) with prediction forms, analytics dashboard, and history
 - **Backend** — Express.js proxy that routes API calls to the ML service
 - **ML Service** — FastAPI server with XGBoost model, explainability, and match data
 - **Scraper** — Data fetcher and synthetic training data generator
@@ -39,14 +40,17 @@ QuantumScore/
 ├── backend/                  # Express.js API proxy
 │   ├── server.js
 │   └── package.json
-├── frontend/                 # Next.js web UI
-│   ├── pages/
-│   │   ├── _app.js
-│   │   ├── index.js
-│   │   ├── predict.js
-│   │   └── live.js
-│   ├── styles/
-│   │   └── globals.css
+├── frontend/                 # React + TypeScript UI (Vite)
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── components/   # UI components (PredictionForm, Analytics, etc.)
+│   │   │   ├── pages/        # Page views (Login)
+│   │   │   ├── lib/          # Utilities, predictor logic, sports data
+│   │   │   └── App.tsx       # Main app with routing & layout
+│   │   ├── main.tsx          # Entry point
+│   │   └── index.css         # Global styles
+│   ├── vite.config.ts        # Vite config with API proxy
+│   ├── tailwind.config.js    # Tailwind CSS configuration
 │   └── package.json
 ├── ml_service/               # FastAPI + XGBoost prediction service
 │   ├── main.py               # API endpoints
@@ -119,7 +123,7 @@ npm install
 npm start
 ```
 
-### 7. Start the Frontend (port 3000)
+### 7. Start the Frontend (port 5173)
 
 ```bash
 cd frontend
@@ -127,7 +131,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ## API Endpoints
 

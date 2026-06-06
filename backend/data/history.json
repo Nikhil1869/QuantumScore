@@ -1,0 +1,92 @@
+[
+  {
+    "id": "8ffb0595-d207-4e01-9b8e-f437b2b97d1c",
+    "match": "Manchester United vs Liverpool",
+    "sport": "football",
+    "predicted": "Liverpool",
+    "actual": "Pending",
+    "confidence": 0.694,
+    "isCorrect": null,
+    "date": "06/06/2026"
+  },
+  {
+    "id": "1e611248-424e-4b4c-8259-74607300aad1",
+    "match": "Leicester City vs Aston Villa",
+    "sport": "football",
+    "predicted": "Aston Villa",
+    "actual": "Pending",
+    "confidence": 0.621,
+    "isCorrect": null,
+    "date": "06/06/2026"
+  },
+  {
+    "id": "5f7d9968-2c7d-44b6-8970-f86ee9ec8e86",
+    "match": "Tottenham vs Manchester City",
+    "sport": "football",
+    "predicted": "Manchester City",
+    "actual": "Pending",
+    "confidence": 0.7,
+    "isCorrect": null,
+    "date": "06/06/2026"
+  },
+  {
+    "id": "6a60bdfa-c98e-405a-accf-c4608624c7a9",
+    "match": "Arsenal vs Chelsea",
+    "sport": "football",
+    "predicted": "Chelsea",
+    "actual": "Pending",
+    "confidence": 0.513,
+    "isCorrect": null,
+    "date": "06/06/2026"
+  },
+  {
+    "id": "74ac7cad-fb56-4a5b-b597-ba5cb8b7d019",
+    "match": "Liverpool vs Everton",
+    "sport": "football",
+    "predicted": "Liverpool",
+    "actual": "Pending",
+    "confidence": 0.818,
+    "isCorrect": null,
+    "date": "06/06/2026"
+  },
+  {
+    "id": "8a04da3c-50a6-442b-856b-85dae19aa8ed",
+    "match": "Manchester United vs Newcastle",
+    "sport": "football",
+    "predicted": "Newcastle",
+    "actual": "Pending",
+    "confidence": 0.581,
+    "isCorrect": null,
+    "date": "06/06/2026"
+  },
+  {
+    "id": "a2c441a7-a273-4cca-92d6-99b794af5ba6",
+    "match": "Los Angeles Lakers vs Boston Celtics",
+    "sport": "basketball",
+    "predicted": "Boston Celtics",
+    "actual": "Pending",
+    "confidence": 0.69,
+    "isCorrect": null,
+    "date": "06/06/2026"
+  },
+  {
+    "id": "dad56faa-4328-489f-9ef1-900911ecd2ea",
+    "match": "Manchester United vs Liverpool",
+    "sport": "football",
+    "predicted": "Liverpool",
+    "actual": "Pending",
+    "confidence": 0.694,
+    "isCorrect": null,
+    "date": "06/06/2026"
+  },
+  {
+    "id": "356a1fff-4a90-431f-8a59-5d725357de37",
+    "match": "Barcelona vs Real Madrid",
+    "sport": "football",
+    "predicted": "Real Madrid",
+    "actual": "Pending",
+    "confidence": 0.606,
+    "isCorrect": null,
+    "date": "06/06/2026"
+  }
+]
